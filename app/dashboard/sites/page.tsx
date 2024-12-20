@@ -84,7 +84,9 @@ export default async function SitesPage() {
               </CardHeader>
               <CardFooter>
                 <Button asChild className="w-full">
-                  <Link href="#">View Articles</Link>
+                  <Link href={`/dashboard/sites/${item.id}`}>
+                    View Articles
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
