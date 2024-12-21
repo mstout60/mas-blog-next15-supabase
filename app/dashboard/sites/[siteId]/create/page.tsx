@@ -1,5 +1,6 @@
 "use client";
 
+import TailwindEditor from "@/app/components/dashboard/editor-wrapper";
 import { UploadDropzone } from "@/app/utils/uploadthing-components";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Atom } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { JSONContent } from "novel";
 import React, { use, useState } from "react";
 import { toast } from "sonner";
 
@@ -25,6 +27,7 @@ export default function ArticleCreationRoute({
 }) {
   const { siteId } = use(params);
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [value, setValue] = useState<JSONContent | undefined>(undefined);
 
   return (
     <>
@@ -87,6 +90,12 @@ export default function ArticleCreationRoute({
                 />
               )}
             </div>
+            <div className="grid gap-2">
+              <Label>Artical Content</Label>
+              <TailwindEditor onChange={setValue} initialValue={value} />
+            </div>
+
+            <Button className="w-fit">Submit</Button>
           </form>
         </CardContent>
       </Card>
