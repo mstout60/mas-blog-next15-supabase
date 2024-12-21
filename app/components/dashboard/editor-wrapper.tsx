@@ -27,15 +27,16 @@ const TailwindEditor = ({ initialValue, onChange }: EditorProps) => {
   return (
     <EditorRoot>
       <EditorContent
-      className="border p-4 rounded-lg min-h-64"
+        className="border p-4 rounded-lg min-h-64"
         editorProps={{
-            handleDOMEvents: {
-              keydown: (_view, event) => handleCommandNavigation(event),
-            },
-            attributes: {
-              class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
-            }
+          handleDOMEvents: {
+            keydown: (_view, event) => handleCommandNavigation(event),
+          },
+          attributes: {
+            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
+          },
         }}
+        immediatelyRender={false}
         extensions={extensions}
         initialContent={initialValue}
         onUpdate={({ editor }) => {
