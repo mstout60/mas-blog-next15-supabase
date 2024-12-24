@@ -86,3 +86,17 @@ export async function EditPostActions(prevState: any, formData: FormData) {
 
   return redirect(`/dashboard/sites/${formData.get("siteId")}`);
 }
+
+export async function DeletePost(formData: FormData) {
+  const user = await requireUser();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const data = await prisma.post.delete({
+    where: {
+      userId: user.id,
+      id: formData.get("articleId") as string,
+    },
+  });
+
+  return redirect(`/dashboard/sites/${formData.get("siteId")}`);
+}
