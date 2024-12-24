@@ -24,6 +24,7 @@ import { JSONContent } from "novel";
 import React, { use, useActionState, useState } from "react";
 import { toast } from "sonner";
 import slugify from "react-slugify";
+import { SubmitButton } from "@/app/components/dashboard/submit-buttons";
 
 export default function ArticleCreationRoute({
   params,
@@ -82,6 +83,7 @@ export default function ArticleCreationRoute({
             onSubmit={form.onSubmit}
             action={action}
           >
+            <input type="hidden" name="siteId" value={siteId} />
             <div className="grid gap-2">
               <Label>Title</Label>
               <Input
@@ -167,7 +169,7 @@ export default function ArticleCreationRoute({
                 name={fields.articleContent.name}
                 key={fields.articleContent.key}
                 defaultValue={fields.articleContent.initialValue}
-                value={JSON.stringify(value)}
+                value={JSON.stringify(value ?? "")}
               />
               <TailwindEditor onChange={setValue} initialValue={value} />
               <p className="text-red-500 text-sm">
@@ -175,7 +177,7 @@ export default function ArticleCreationRoute({
               </p>
             </div>
 
-            <Button className="w-fit">Submit</Button>
+            <SubmitButton text="Create Article" />
           </form>
         </CardContent>
       </Card>
