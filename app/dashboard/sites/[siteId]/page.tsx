@@ -1,3 +1,4 @@
+import { EmptyState } from "@/app/components/dashboard/forms/empty-state";
 import prisma from "@/app/utils/db";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,6 @@ import {
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import {
   Book,
-  FileIcon,
   MoreHorizontal,
   PlusCircle,
   Settings,
@@ -81,7 +81,7 @@ export default async function SiteIdRoute({
           </Link>
         </Button>
         <Button asChild variant="secondary">
-          <Link href="#">
+          <Link href={`/dashboard/sites/${siteId}/settings`}>
             <Settings className="size-4 mr-2" />
             Settings
           </Link>
@@ -95,24 +95,12 @@ export default async function SiteIdRoute({
       </div>
 
       {data === undefined || data.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8 text-center animate-in fade-in-50">
-          <div className="flex size-20 items-center justify-center rounded-full bg-primary/10">
-            <FileIcon className="size-10 text-primary" />
-          </div>
-          <h2 className="mt-6 text-xl font-semibold">
-            You do not have any Sites created
-          </h2>
-          <p className="mb-8 mt-2 text-center text-sm leading-tight text-muted-foreground max-w-sm mx-auto">
-            You currently do not have any Sites. Please create some so that you
-            can see them here!
-          </p>
-          <Button asChild>
-            <Link href={"/dashboard/sites/new"}>
-              <PlusCircle className="mr-2 size-4" />
-              Create Site
-            </Link>
-          </Button>
-        </div>
+        <EmptyState
+          title=" You do not have any Articles created"
+          description="You currently do not have any Articles. Please create some so that you can see them here!"
+          buttonText="Create Article"
+          href={`/dashboard/sites/${siteId}/create`}
+        />
       ) : (
         <div>
           <Card>
@@ -179,7 +167,7 @@ export default async function SiteIdRoute({
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                            <Link
+                              <Link
                                 href={`/dashboard/sites/${siteId}/${item.id}/delete`}
                               >
                                 Delete

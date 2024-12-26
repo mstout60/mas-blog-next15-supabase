@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { parseWithZod } from "@conform-to/zod";
-import { PostSchema, siteSchema } from "@/app/utils/zod-schema";
+import { PostSchema, SiteCreationSchema } from "@/app/utils/zod-schema";
 import prisma from "@/app/utils/db";
 import { requireUser } from "@/app/utils/require-user";
 
@@ -10,8 +10,18 @@ import { requireUser } from "@/app/utils/require-user";
 export async function CreateSiteAction(prevState: any, formData: FormData) {
   const user = await requireUser();
 
-  const submission = parseWithZod(formData, {
-    schema: siteSchema,
+  const submission = await parseWithZod(formData, {
+    schema: SiteCreationSchema({
+      async isSubdirectoryUnique() {
+        const exisitngSubDirectory = await prisma.site.findUnique({
+          where: {
+            subdirectory: formData.get("subdirectory") as string,
+          },
+        });
+        return !exisitngSubDirectory;
+      },
+    }),
+    async: true,
   });
 
   if (submission.status !== "success") {
@@ -99,4 +109,48 @@ export async function DeletePost(formData: FormData) {
   });
 
   return redirect(`/dashboard/sites/${formData.get("siteId")}`);
+}
+
+export async function UpdateImage(formData: FormData) {
+  const user = await requireUser();
+
+  const userId = user.id;
+  const siteId = formData.get("siteId") as string;
+  const imageUrl = formData.get("imageUrl") as string;
+
+  console.log("UserId:", userId);
+  console.log("SiteId:", siteId);
+  console.log("ImageURL:", imageUrl);
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const data = prisma.site.update({
+      where: {
+        userId: userId,
+        id: siteId as string,
+      },
+      data: {
+        imageUrl: imageUrl,
+      },
+    });
+    console.log("Site Image Upload Success");
+  } catch (error) {
+    console.log("Site Update Error", error);
+  }
+
+  return redirect(`/dashboard/sites/${formData.get("siteId")}`);
+}
+
+export async function DeleteSite(formData: FormData) {
+  const user = await requireUser();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const data = await prisma.site.delete({
+    where: {
+      userId: user.id,
+      id: formData.get("siteId") as string,
+    },
+  });
+
+  return redirect("/dashboard/sites");
 }
