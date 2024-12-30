@@ -26,12 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import {
-  Book,
-  MoreHorizontal,
-  PlusCircle,
-  Settings,
-} from "lucide-react";
+import { Book, MoreHorizontal, PlusCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -48,6 +43,11 @@ async function getData(userId: string, siteId: string) {
       title: true,
       createdAt: true,
       id: true,
+      Site: {
+        select: {
+          subdirectory: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -75,7 +75,7 @@ export default async function SiteIdRoute({
     <>
       <div className="flex w-full justify-end gap-x-4">
         <Button asChild variant="secondary">
-          <Link href="#">
+          <Link href={`/blog/${data[0].Site?.subdirectory}`}>
             <Book className="size-4 mr-2" />
             View Blog
           </Link>
