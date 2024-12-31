@@ -11,32 +11,65 @@ import { stripe } from "./utils/stripe";
 export async function CreateSiteAction(prevState: any, formData: FormData) {
   const user = await requireUser();
 
-  const submission = await parseWithZod(formData, {
-    schema: SiteCreationSchema({
-      async isSubdirectoryUnique() {
-        const exisitngSubDirectory = await prisma.site.findUnique({
-          where: {
-            subdirectory: formData.get("subdirectory") as string,
-          },
-        });
-        return !exisitngSubDirectory;
+  const [subStatus, sites] = await Promise.all([
+    prisma.subscription.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        status: true,
       },
     }),
-    async: true,
-  });
+    prisma.site.findMany({
+      where: {
+        userId: user.id,
+      },
+    }),
+  ]);
 
-  if (submission.status !== "success") {
-    return submission.reply();
+  console.log("subStatus: ", subStatus);
+
+  if (!subStatus || subStatus.status !== "active") {
+    if (sites.length < 1) {
+      // Allow site creation
+      await createSite();
+    } else {
+      // User already has one or more sites, not allowed to create sites unless using paywall
+      return redirect("/dashboard/pricing");
+    }
+  } else if (subStatus.status === "active") {
+    // User has a plan and can create sites based on the plan
+    await createSite();
   }
 
-  await prisma.site.create({
-    data: {
-      description: submission.value.description,
-      name: submission.value.name,
-      subdirectory: submission.value.subdirectory,
-      userId: user.id,
-    },
-  });
+  async function createSite() {
+    const submission = await parseWithZod(formData, {
+      schema: SiteCreationSchema({
+        async isSubdirectoryUnique() {
+          const exisitngSubDirectory = await prisma.site.findUnique({
+            where: {
+              subdirectory: formData.get("subdirectory") as string,
+            },
+          });
+          return !exisitngSubDirectory;
+        },
+      }),
+      async: true,
+    });
+
+    if (submission.status !== "success") {
+      return submission.reply();
+    }
+
+    await prisma.site.create({
+      data: {
+        description: submission.value.description,
+        name: submission.value.name,
+        subdirectory: submission.value.subdirectory,
+        userId: user.id,
+      },
+    });
+  }
 
   return redirect("/dashboard/sites");
 }
@@ -205,5 +238,5 @@ export async function CreateSubscription() {
     ],
   });
 
-  return redirect(session.url as string)
+  return redirect(session.url as string);
 }
