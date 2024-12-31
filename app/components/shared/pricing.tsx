@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import { SubmitButton } from "@/app/components/dashboard/submit-buttons";
+import Link from "next/link";
+import { CreateSubscription } from "@/app/actions";
 
 interface iAppProps {
   id: number;
@@ -64,14 +66,14 @@ export function PricingTable() {
             <CardHeader>
               <CardTitle>
                 {item.id === 1 ? (
-                   <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <h3 className="text-primary">StartUp</h3>
-                    <p className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold leading-5 text-primary">Most popular</p>
-                   </div>
+                    <p className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold leading-5 text-primary">
+                      Most popular
+                    </p>
+                  </div>
                 ) : (
-                    <>
-                    {item.cardTitle}
-                    </>
+                  <>{item.cardTitle}</>
                 )}
               </CardTitle>
               <CardDescription>{item.cardDescription}</CardDescription>
@@ -80,23 +82,25 @@ export function PricingTable() {
               <p className="mt-6 text-4xl font-bold tracking-tight">
                 {item.priceTitle}
               </p>
-              <ul className="mt-8 space-y-8 text-sm leading-6 text-muted-foreground">
-            {item.benefits.map((benefit, index) => (
-                <li key={index} className="flex gap-x-3">
+              <ul className="mt-8 space-y-5 text-sm leading-6 text-muted-foreground">
+                {item.benefits.map((benefit, index) => (
+                  <li key={index} className="flex gap-x-3">
                     <Check className="text-primary size-5" />
                     {benefit}
-                </li>
-            ))}
+                  </li>
+                ))}
               </ul>
             </CardContent>
             <CardFooter>
-                {item.id === 1 ? (
-                   <form className="w-full">
-                    <SubmitButton text="Buy Plan" className="mt-5 w-full"/>
-                   </form>
-                ):(
-                    <Button variant="outline" className="mt-5 w-full">Try for Free</Button>
-                )}
+              {item.id === 1 ? (
+                <form className="w-full" action={CreateSubscription}>
+                  <SubmitButton text="Buy Plan" className="mt-5 w-full" />
+                </form>
+              ) : (
+                <Button variant="outline" className="mt-5 w-full" asChild>
+                  <Link href="/dashboard">Try for Free</Link>
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}

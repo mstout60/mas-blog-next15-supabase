@@ -15,11 +15,12 @@ datasource db {
 }
 
 model User {
-  id           String @id @unique
+  id           String  @id @unique
   email        String
   firstName    String
   lastName     String
   profileImage String
+  customerId   String? @unique
 
   createdAt DateTime @default(now())
   Sites     Site[]
