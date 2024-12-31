@@ -31,7 +31,7 @@ export async function GET() {
 
   return NextResponse.redirect(
     process.env.NODE_ENV === "production"
-      ? "https://mas-blog-next15-supabase.vercel.app/dasboard"
+      ? "https://mas-blog-next15-supabase.vercel.app/dashboard"
       : "http://localhost:3000/dashboard"
   );
 }
